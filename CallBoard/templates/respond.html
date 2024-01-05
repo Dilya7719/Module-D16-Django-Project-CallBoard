@@ -1,0 +1,88 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Объявление
+{% endblock title %}
+
+{% block content %}
+<br>
+<input type="button" value="В список объявлений" onClick='location.href="http://127.0.0.1:8000/calls"'>
+{% if is_my_call %}
+    <input type="button" value="Редактировать" onClick='location.href="{% url 'call_edit' call.id %}"'>
+    <input type="button" value="Удалить" onClick='location.href="{% url 'call_delete' call.id %}"'>
+{% endif %}
+<br>
+<h4><br>{{ call.call_author }} {{ call.call_create_date|date:'d.m.Y' }} {{ call.get_call_category_display }}</h4>
+<h2>{{ call.call_header }}</h2>
+{% if call.call_img %}
+    <img src="{{ call.call_img.url }}" />
+{% endif %}
+<h4><br>{{ call.call_text }}</h4>
+
+{% if not is_my_call %}
+    {% if my_responds %}
+        <hr>
+        <p style="color: green;"><b>Вы откликнулись на это объявление:</b></p>
+        {% for respond in my_responds %}
+            <tr>
+                <td>{{ respond.respond_create_date|date:'d.m.Y' }}</td>
+                <td>{{ respond.respond_text }}</td>
+                {% if respond.respond_accept == None %}
+                    <td><b style="color: gray;"><i><u>Не просмотрен</u></i></b></td>
+                {% elif respond.respond_accept %}
+                    <td><b style="color: green;"><i><u>Принят</u></i></b></td>
+                {% else %}
+                    <td><b style="color: red;"><i><u>Отклонен</u></i></b></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    {% else %}
+        <hr>
+        <p style="color: gray;"><b>Вы не откликались на это объявление:</b></p>
+        <form id="id" action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Отправить отклик" />
+        </form>
+    {% endif %}
+    <hr>
+    {% if responds %}
+         <p style="color: blue;"><b>Отклики других пользователей</b></p>
+        <hr>
+        {% for respond in responds %}
+            <tr>
+                <td>{{ respond.respond_author }}</td>
+                <td>{{ respond.respond_create_date|date:'d.m.Y' }}</td>
+                <td>{{ respond.respond_text }}</td>
+            </tr>
+            <br>
+        {% endfor %}
+    {% else %}
+        <p style="color: gray;"><b>Откликов других пользователей пока нет</b></p>
+        <hr>
+    {% endif %}
+{% else %}
+    <hr>
+    {% if my_responds_edit %}
+        <p style="color: blue;"><b>Отклики на ваше объявление</b></p>
+        <hr>
+        {% for respond in my_responds_edit %}
+            <tr>
+                <td>{{ respond.respond_author }}</td>
+                <td>{{ respond.respond_create_date|date:'d.m.Y' }}</td>
+                <td>{{ respond.respond_text }}</td>
+                {% if not respond.respond_accept %}
+                    <td><b><a style="color: green;" href="{% url 'respond_accept_yes' respond.id %}">Принять</a></b></td>
+                    <td><b><a style="color: red;" href="{% url 'respond_accept_no' respond.id %}">Отклонить</a></b></td>
+                {% else %}
+                    <td><b style="color: green;"><i><u>Принят</u></i></b></td>
+                {% endif %}
+            </tr>
+            <br>
+        {% endfor %}
+    {% else %}
+        <p style="color: gray;"><b>Откликов пока нет</b></p>
+        <hr>
+    {% endif %}
+{% endif %}
+{% endblock content %}

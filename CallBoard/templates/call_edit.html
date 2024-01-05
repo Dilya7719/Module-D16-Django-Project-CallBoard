@@ -1,0 +1,20 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_tags %}
+
+{% block content %}
+    {% if is_my_call %}
+        <br>
+        <input type="button" value="Назад" onClick="history.back();">
+        <br>
+        <h1>Редактирование объявления</h1>
+        <hr>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Save" />
+        </form>
+    {% else %}
+        <br>
+        <h2>Вы не можете редактировать чужое объявление!</h2>
+    {% endif %}
+{% endblock content %}

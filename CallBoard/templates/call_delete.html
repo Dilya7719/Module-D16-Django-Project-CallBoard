@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+    {% if is_my_call %}
+        <br>
+        <input type="button" value="Назад" onClick="history.back();">
+        <br>
+        <h1>Удаление объявления</h1>
+        <hr>
+        <form action="" method="post">
+            {% csrf_token %}
+            <p>Удаляем "{{ object.call_header }}"?</p>
+            <input type="submit" value="Delete" />
+        </form>
+    {% else %}
+        <br>
+        <h2>Вы не можете удалить чужое объявление!</h2>
+    {% endif %}
+{% endblock content %}

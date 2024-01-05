@@ -1,0 +1,34 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_tags %}
+
+{% block title %}
+Отклики на мои объявления
+{% endblock title %}
+
+{% block content %}
+   <h1>Отклики на мои объявления</h1>
+   <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Применить фильтр" />
+   </form>
+   <hr>
+   {% if responds %}
+        {% for respond in responds %}
+            <tr>
+                <td>{{ respond.respond_author }}</td>
+                <td>{{ respond.respond_create_date|date:'d.m.Y' }}</td>
+                <td>{{ respond.respond_text }}</td>
+                {% if not respond.respond_accept %}
+                    <td><b><a style="color: green;" href="{% url 'respond_accept_yes' respond.id %}">Принять</a></b></td>
+                    <td><b><a style="color: red;" href="{% url 'respond_accept_no' respond.id %}">Отклонить</a></b></td>
+                {% else %}
+                    <td><b style="color: green;"><i><u>Принят</u></i></b></td>
+                {% endif %}
+            </tr>
+            <br>
+        {% endfor %}
+   {% else %}
+       <h2>Откликов нет!</h2>
+   {% endif %}
+
+{% endblock content %}
